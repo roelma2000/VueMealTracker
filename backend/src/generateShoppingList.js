@@ -23,5 +23,5 @@ export const generateShoppingList = (populatedMeals, userIngredients) => {
         return `${ingredientName}: ${missingAmounts}`;
     });
 
-    return shoppingListItems.join('\n');
+    return shoppingListItems;
 }

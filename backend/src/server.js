@@ -11,19 +11,10 @@ let ingredients= [
 
 let meals = [
     { id: '1234', date: new Date(), recipeId: '123' },
-    { id: '1234', date: new Date(), recipeId: '345' },
-    { id: '1234', date: new Date(), recipeId: '567' },
+
 ];
 
-const populatedMeals = meals.map(meal => {
-    const recipeForMeal = recipes.find(recipe => recipe.id === meal.recipeId);
-    return {
-        ...meal,
-        recipe: recipeForMeal,
-    };
-});
 
-console.log(generateShoppingList(populatedMeals, ingredients));
   
 const app = express();
 
@@ -109,6 +100,17 @@ app.delete('/api/meals/:id', (req,res) => {
     res.json(meals);
 });
 
-
+app.get('/api/shopping-list',(req, res) => {
+    const populatedMeals = meals.map(meal => {
+        const recipeForMeal = recipes.find(recipe => recipe.id === meal.recipeId);
+        return {
+            ...meal,
+            recipe: recipeForMeal,
+        };
+    });
+    
+    const shoppingList = generateShoppingList(populatedMeals, ingredients);
+    res.json(shoppingList);
+});
 
 app.listen(8000, () => console.log('server is listening in port 8000'));
