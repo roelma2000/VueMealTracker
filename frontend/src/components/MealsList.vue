@@ -12,7 +12,10 @@
         >
           <button>Add</button>
         </router-link>
-        <button @click="removeMeal(day)" v-if="getMealForDay(day)">
+        <button
+          @click="removeMeal(getMealForDay(day))"
+          v-if="getMealForDay(day)"
+        >
           Delete
         </button>
       </div>
@@ -45,8 +48,8 @@ export default {
         )
       })
     }, //end getMealForDay
-    removeMeal(date) {
-      this.$emit('removeMeal', { date })
+    removeMeal(meal) {
+      this.$emit('removeMeal', meal )
     }, //end removeMeal
   }, //end methods
 }

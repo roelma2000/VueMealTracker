@@ -4,7 +4,10 @@
       <MealsList :meals="meals" @removeMeal="removeMeal" />
     </div>
     <div class="column">
-      <IngredientsList :ingredients="ingredients" />
+      <IngredientsList
+        @deleteIngredient="deleteIngredient"
+        :ingredients="ingredients"
+      />
       <router-link to="/shopping-list">
         <button class="shopping-list-button list-container full-width">
           Generate Shopping List
@@ -25,9 +28,12 @@ export default {
     IngredientsList,
   },
   methods: {
-    removeMeal(data) {
-      this.$emit('removeMeal', data)
+    removeMeal(meal) {
+      this.$emit('removeMeal', meal)
     }, //end removeMeal
+    deleteIngredient(ingredientName) {
+      this.$emit('deleteIngredient', ingredientName)
+    },
   }, //end methods
 }
 </script>

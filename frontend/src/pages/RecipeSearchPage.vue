@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'RecipeSearchPage',
   props: ['recipes'],
@@ -42,12 +43,12 @@ export default {
   },
   methods: {
     submitSearch() {
-      this.searchResults = this.recipes.filter((recipe) => {
-        return recipe.name
-          .toLowerCase()
-          .includes(this.searchString.toLowerCase())
-      })
+      axios.get(`http://localhost:8000/api/recipes?search=${this.searchString}`)
+          .then(response => {
+            console.log(response.data);
+      this.searchResults = response.data;
       this.hasSearched = true
+      })
     },
     selectRecipe(recipe) {
       const date = new Date(this.$route.query.date)

@@ -3,48 +3,79 @@
   <router-view
     :ingredients="ingredients"
     :meals="meals"
-    :recipes="recipes"
     @addThisIngredient="addIngredient"
     @addMeal="addMeal"
     @removeMeal="removeMeal"
+    @deleteIngredient="deleteIngredient"
   >
   </router-view>
 </template>
 
 <script>
-import recipes from './fake-data'
+import axios from 'axios'
 export default {
   name: 'App',
   data() {
     return {
-      ingredients: [
-        { name: 'Chicken Breast Halves', amount: 4, units: 'count' },
-        { name: 'Pesto', amount: 0.5, units: 'cups' },
-        { name: 'Prosciutto Slices', amount: 4, units: 'count' },
-      ],
+      ingredients: [],
       meals: [],
-      recipes,
     }
+  },
+  created() {
+    axios.get('http://localhost:8000/api/ingredients').then((response) => {
+      console.log(response.data)
+      this.ingredients = response.data
+    })
+
+    axios.get('http://localhost:8000/api/meals').then((response) => {
+      console.log(response.data)
+      this.meals = response.data.map((meal) => ({
+        ...meal,
+        date: new Date(meal.date),
+      }))
+    })
   },
   methods: {
     addIngredient({ name, amount, units }) {
-      this.ingredients.push({ name, amount, units })
+      axios
+        .post('http://localhost:8000/api/ingredients', {
+          name,
+          amount,
+          units,
+        })
+        .then((response) => {
+          this.ingredients = response.data
+        })
     },
     addMeal({ date, recipe }) {
-      console.log({ date, recipe })
-      this.meals.push({ date, recipe })
+      axios
+        .post('http://localhost:8000/api/meals', {
+          date,
+          recipeId: recipe.id,
+        })
+        .then((response) => {
+          this.meals = response.data.map((meal) => ({
+            ...meal,
+            date: new Date(meal.date),
+          }))
+        })
     }, //end addMeal
-    removeMeal({ date }) {
-      console.error('Date:', date)
-
-      this.meals = this.meals.filter((meal) => {
-        return (
-          meal.date.getFullYear() !== date.getFullYear() ||
-          meal.date.getMonth() !== date.getMonth() ||
-          meal.date.getDate() !== date.getDate()
-        )
-      })
+    removeMeal({ id }) {
+      axios.delete(`http://localhost:8000/api/meals/${id}`)
+        .then((response) => {
+          this.meals = response.data.map((meal) => ({
+            ...meal,
+            date: new Date(meal.date),
+          }))
+        })
     }, //end removeMeal
+    deleteIngredient(ingredientName) {
+      axios
+        .delete(`http://localhost:8000/api/ingredients/${ingredientName}`)
+        .then((response) => {
+          this.ingredients = response.data
+        })
+    },
   },
   components: {},
 }
